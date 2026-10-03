@@ -1,6 +1,6 @@
 # Applied Machine Learning
 
-This repository accompanies the Applied Machine Learning course at Albert School. It follows the Telco customer churn case used in Sessions 1 and 2.
+This repository accompanies the Applied Machine Learning course at Albert School. It follows the Telco customer churn case used in Sessions 1–3.
 
 ## Notebook index
 
@@ -9,6 +9,8 @@ Read the notebooks in numerical order:
 1. [`01_telco_basic_eda.ipynb`](notebooks/01_telco_basic_eda.ipynb) — inspect the customers, columns, missing values, target balance, and a few useful relationships.
 2. [`02_telco_baselines.ipynb`](notebooks/02_telco_baselines.ipynb) — compare three transparent baselines with confusion matrices, classification metrics, and business costs.
 3. [`03_telco_preprocessing_and_cv.ipynb`](notebooks/03_telco_preprocessing_and_cv.ipynb) — build a leakage-safe Logistic Regression Pipeline and evaluate it with five-fold stratified cross-validation.
+4. [`04_telco_trees_and_forest.ipynb`](notebooks/04_telco_trees_and_forest.ipynb) — change only the model: compare a small tree, a full tree, and a Random Forest with the Logistic Regression reference.
+5. [`05_telco_boosting_and_model_choice.ipynb`](notebooks/05_telco_boosting_and_model_choice.ipynb) — add boosting, compare five models, and choose a candidate using evidence and business priorities.
 
 ## Set up your Python environment
 
@@ -161,7 +163,7 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-The second command installs every library listed in `requirements.txt`—Jupyter, pandas, NumPy, Matplotlib, seaborn, and scikit-learn—and automatically installs the additional packages they depend on. You do not need to install those dependencies one by one. The first installation can take a few minutes and requires an internet connection.
+The second command installs every library listed in `requirements.txt`—Jupyter, pandas, NumPy, Matplotlib, seaborn, scikit-learn, XGBoost, and LightGBM—and automatically installs the additional packages they depend on. You do not need to install those dependencies one by one. The first installation can take a few minutes and requires an internet connection.
 
 Check that the installed packages and their dependencies are consistent:
 
@@ -172,7 +174,7 @@ python -m pip check
 Then verify that the libraries used in the notebooks can be imported:
 
 ```bash
-python -c "import pandas, numpy, matplotlib, seaborn, sklearn; print('Environment ready')"
+python -c "import pandas, numpy, matplotlib, seaborn, sklearn, xgboost, lightgbm; print('Environment ready')"
 ```
 
 If both commands finish without an error, the environment is ready. This installation does not need to be repeated every time you open the project.
