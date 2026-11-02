@@ -1,6 +1,6 @@
 # Applied Machine Learning
 
-This repository accompanies the Applied Machine Learning course at Albert School. It follows the Telco customer churn case used in Sessions 1–3.
+This repository accompanies the Applied Machine Learning course at Albert School. It follows the Telco customer churn case used in Sessions 1–5.
 
 ## Notebook index
 
@@ -11,6 +11,15 @@ Read the notebooks in numerical order:
 3. [`03_telco_preprocessing_and_cv.ipynb`](notebooks/03_telco_preprocessing_and_cv.ipynb) — build a leakage-safe Logistic Regression Pipeline and evaluate it with five-fold stratified cross-validation.
 4. [`04_telco_trees_and_forest.ipynb`](notebooks/04_telco_trees_and_forest.ipynb) — change only the model: compare a small tree, a full tree, and a Random Forest with the Logistic Regression reference.
 5. [`05_telco_boosting_and_model_choice.ipynb`](notebooks/05_telco_boosting_and_model_choice.ipynb) — add boosting, compare five models, and choose a candidate using evidence and business priorities.
+6. [`06_telco_feature_engineering.ipynb`](notebooks/06_telco_feature_engineering.ipynb) — Session 4: test feature hypotheses, categorical encodings, and complete solutions with the same development folds.
+7. [`07_telco_comparison_and_selection.ipynb`](notebooks/07_telco_comparison_and_selection.ipynb) — Session 5: paired AP differences, illustrative Wilcoxon, paired bootstrap, multiple comparisons, and an executed nested-CV selection procedure.
+8. [`08_telco_economic_uncertainty.ipynb`](notebooks/08_telco_economic_uncertainty.ipynb) — Session 5: reproduce the training and out-of-fold economic comparison of Logistic Regression with original inputs versus added logs, including 5,000 paired bootstrap draws.
+
+Each notebook runs independently from the `notebooks` directory and includes saved outputs. Sessions 4–5 use only development data: the stratified 20% final test from notebook 03 (`random_state=42`) remains closed. Development comparisons reuse five stratified, shuffled folds with seed 42. Notebook 07 runs nested CV within development; its outer results assess the restricted selection procedure, with the prior classroom search explicitly acknowledged.
+
+The economic calculation reproduces approximately +€127,796 per million customers on training predictions and +€234,292 on out-of-fold predictions, with an exploratory 95% interval from −€149,627 to +€575,080. Its central estimate is positive, but the interval includes losses. Predictions remain fixed during bootstrap; costs and retention effectiveness are assumptions, not measured causal effects.
+
+Sessions 4–5 require scikit-learn 1.9 or later for explicit cross-validation splitters in target encoding. SciPy is listed directly for Wilcoxon (it was already installed through scikit-learn). Each new notebook prints the library versions used for its saved outputs; no previous notebook has been changed.
 
 ## Set up your Python environment
 
