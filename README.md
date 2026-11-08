@@ -1,6 +1,6 @@
 # Applied Machine Learning
 
-This repository accompanies the Applied Machine Learning course at Albert School. It follows the Telco customer churn case used in Sessions 1–5.
+This repository accompanies the Applied Machine Learning course at Albert School. It follows the Telco customer churn case used in Sessions 1–6.
 
 ## Notebook index
 
@@ -14,12 +14,29 @@ Read the notebooks in numerical order:
 6. [`06_telco_feature_engineering.ipynb`](notebooks/06_telco_feature_engineering.ipynb) — Session 4: test feature hypotheses, categorical encodings, and complete solutions with the same development folds.
 7. [`07_telco_comparison_and_selection.ipynb`](notebooks/07_telco_comparison_and_selection.ipynb) — Session 5: paired AP differences, illustrative Wilcoxon, paired bootstrap, multiple comparisons, and an executed nested-CV selection procedure.
 8. [`08_telco_economic_uncertainty.ipynb`](notebooks/08_telco_economic_uncertainty.ipynb) — Session 5: reproduce the training and out-of-fold economic comparison of Logistic Regression with original inputs versus added logs, including 5,000 paired bootstrap draws.
+9. [`09_telco_probability_calibration.ipynb`](notebooks/09_telco_probability_calibration.ipynb) — Session 6: distinguish ranking, classification and probabilities; compare raw, sigmoid and isotonic predictions with Brier, learned mappings, actual bin support and Wilson intervals.
+10. [`10_telco_customer_group_diagnostics.ipynb`](notebooks/10_telco_customer_group_diagnostics.ipynb) — Session 6: inspect calibration and cutoff-dependent detection for monthly and longer contracts, with uncertainty and group-specific denominators.
+11. [`11_telco_thresholds_and_business_decisions.ipynb`](notebooks/11_telco_thresholds_and_business_decisions.ipynb) — Session 6: select uncapped policies on validation, evaluate on holdout, isolate a contact cap, bootstrap paired value differences, explore economic sensitivity and design a policy A/B test.
 
 Each notebook runs independently from the `notebooks` directory and includes saved outputs. Sessions 4–5 use only development data: the stratified 20% final test from notebook 03 (`random_state=42`) remains closed. Development comparisons reuse five stratified, shuffled folds with seed 42. Notebook 07 runs nested CV within development; its outer results assess the restricted selection procedure, with the prior classroom search explicitly acknowledged.
 
 The economic calculation reproduces approximately +€127,796 per million customers on training predictions and +€234,292 on out-of-fold predictions, with an exploratory 95% interval from −€149,627 to +€575,080. Its central estimate is positive, but the interval includes losses. Predictions remain fixed during bootstrap; costs and retention effectiveness are assumptions, not measured causal effects.
 
 Sessions 4–5 require scikit-learn 1.9 or later for explicit cross-validation splitters in target encoding. SciPy is listed directly for Wilcoxon (it was already installed through scikit-learn). Each new notebook prints the library versions used for its saved outputs; no previous notebook has been changed.
+
+### Session 6 protocol and economic assumptions
+
+Continue in numerical order: notebook 09 introduces probability diagnostics, 10 explores contract groups, and 11 fixes and evaluates business policies. Each rebuilds its experiment independently. These notebooks follow the local Session 6 v4 HTML, experiment script, evidence JSON and storytelling notes; those instructor files are read-only references and are not needed to execute the repository.
+
+The dataset SHA-256 is checked against the classroom evidence. The stratified split (seed 42) contains 5,634 development and 1,409 holdout customers. Development is split into 3,943 fitting and 1,691 validation customers (seed 606). Sigmoid and isotonic calibration use five shuffled stratified fitting folds, seed 606, with `ensemble=False`. Validation selects the correction and each model's cutoff from 0.1–1.0; refitting uses development with decisions fixed. Session 6 introduces holdout evaluation, but that holdout has already been inspected in classroom materials: this is a teaching reproduction, not a fresh untouched confirmation. Group diagnostics are exploratory.
+
+Session 6 compares original-input Logistic Regression with Logistic Regression plus two logs, distinct from notebook 07's algorithm comparison. Relative to no offers (zero incremental contribution), it assumes €300 preserved margin, a €20 discount paid only when accepted with staying, 20% retention of would-be churners, 50% discount acceptance among would-be stayers, and zero contact and implementation costs by default. Thus expected contribution is `56 × TP − 10 × FP`. Notebook 08 instead uses 40% retention, €22 per contact and fixed top-20% capacity; its estimates and intervals must not be carried over. Session 6's main policy has no contact cap. A separate comparison holds model and cutoff fixed while adding a 20% cap, rounded up with stable score ties resolved by holdout row order.
+
+Campaign counts, contributions, differences and interval bounds are reported per million customers using the actual validation, holdout or group denominator. Actual sample sizes and bin support remain visible. Scaling does not increase precision. The 4,000-draw paired bootstrap (seed 606) holds models, cutoffs and intervention assumptions fixed; it omits full retraining/selection and causal offer-effect uncertainty. Sensitivity scenarios are separate from confidence intervals. A randomized policy experiment is needed to measure intervention value.
+
+The v4 reference used scikit-learn 1.8.0; saved notebooks use the compatible repository environment (versions printed in each notebook), preserving the >=1.9 requirement. Notebook 11 calculates differences from the classroom figures instead of replacing computed values with reference constants.
+
+Executed with Python 3.12.9, scikit-learn 1.9.1, NumPy 2.5.3 and pandas 3.0.6, all three Session 6 notebooks pass from clean kernels. Raw finalist probabilities win validation Brier; both models select cutoff 0.2. Holdout expected contributions reproduce v4 at €10,127,750.18 and €10,205,819.73 per million, a paired difference of +€78,069.55 with conditional 95% interval [−€231,405.25, +€401,703.34]. Group detection checks also match. There is no material discrepancy in these campaign results despite the environment change; small continuous probability differences need not alter cutoff decisions. The interval includes losses, and offer-response assumptions still require experimental validation.
 
 ## Set up your Python environment
 
