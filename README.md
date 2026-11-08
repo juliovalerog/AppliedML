@@ -22,7 +22,9 @@ Each notebook runs independently from the `notebooks` directory and includes sav
 
 The economic calculation reproduces approximately +€127,796 per million customers on training predictions and +€234,292 on out-of-fold predictions, with an exploratory 95% interval from −€149,627 to +€575,080. Its central estimate is positive, but the interval includes losses. Predictions remain fixed during bootstrap; costs and retention effectiveness are assumptions, not measured causal effects.
 
-Sessions 4–5 require scikit-learn 1.9 or later for explicit cross-validation splitters in target encoding. SciPy is listed directly for Wilcoxon (it was already installed through scikit-learn). Each new notebook prints the library versions used for its saved outputs; no previous notebook has been changed.
+Sessions 4–5 require scikit-learn 1.9 or later for explicit cross-validation splitters in target encoding. SciPy is listed directly for Wilcoxon (it was already installed through scikit-learn). Notebooks 06–11 print the library versions used for their saved outputs.
+
+All eleven notebooks have been reviewed against notebook 01's teaching style: comments explain each executable step, intermediate values have readable names, and calculations are separated from their plots. Straightforward loops replace dense nested comprehensions. Row-wise feature formulas use ordinary functions; the frequency encoder keeps a small fitted class because it must remember training statistics. Repeated fold evaluation and accounting retain local helpers with their steps exposed. Each notebook remains self-contained, with no shared helper module required. The readability review preserves the experiments, splits, seeds, model settings and economic assumptions; all eleven notebooks were checked from clean kernels.
 
 ### Session 6 protocol and economic assumptions
 
