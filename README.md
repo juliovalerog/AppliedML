@@ -1,6 +1,6 @@
 # Applied Machine Learning
 
-This repository accompanies the Applied Machine Learning course at Albert School. It follows the Telco customer churn case used in Sessions 1–6.
+This repository accompanies the Applied Machine Learning course at Albert School. It follows the Telco customer churn case used in Sessions 1–7, with a first local FastAPI example for Session 8. **Session 8 is a preview of next semester's dedicated MLOps & Model Deployment course.**
 
 ## Notebook index
 
@@ -17,14 +17,17 @@ Read the notebooks in numerical order:
 9. [`09_telco_probability_calibration.ipynb`](notebooks/09_telco_probability_calibration.ipynb) — Session 6: distinguish ranking, classification and probabilities; compare raw, sigmoid and isotonic predictions with Brier, learned mappings, actual bin support and Wilson intervals.
 10. [`10_telco_customer_group_diagnostics.ipynb`](notebooks/10_telco_customer_group_diagnostics.ipynb) — Session 6: inspect calibration and cutoff-dependent detection for monthly and longer contracts, with uncertainty and group-specific denominators.
 11. [`11_telco_thresholds_and_business_decisions.ipynb`](notebooks/11_telco_thresholds_and_business_decisions.ipynb) — Session 6: select uncapped policies on validation, evaluate on holdout, isolate a contact cap, bootstrap paired value differences, explore economic sensitivity and design a policy A/B test.
+12. [`12_telco_global_importance.ipynb`](notebooks/12_telco_global_importance.ipynb) — Session 7: explain global reliance with validation permutation, compare XGBoost training gain on the same model, and investigate correlated billing inputs with standalone, within-decile and joint shuffles.
+13. [`13_telco_local_explanations.ipynb`](notebooks/13_telco_local_explanations.ipynb) — Session 7: reconstruct individual log-odds scores with linear SHAP, contrast two class customers, inspect built-in TreeSHAP and global summaries, and explain the policy to different audiences; optional PDP/ICE syllabus bridge.
+14. [`14_telco_local_fastapi.ipynb`](notebooks/14_telco_local_fastapi.ipynb) — Session 8 preview: save and reload the Session 6 pipeline, start a local FastAPI service, send a complete JSON customer and inspect prediction and validation responses. Follow the [terminal walkthrough](serving/README.md) alongside it.
 
-Each notebook runs independently from the `notebooks` directory and includes saved outputs. Sessions 4–5 use only development data: the stratified 20% final test from notebook 03 (`random_state=42`) remains closed. Development comparisons reuse five stratified, shuffled folds with seed 42. Notebook 07 runs nested CV within development; its outer results assess the restricted selection procedure, with the prior classroom search explicitly acknowledged.
+Each notebook runs independently from the `notebooks` directory and includes saved outputs. Notebook 14 additionally needs the serving dependencies and a local Uvicorn process in a separate terminal, as its instructions explain. Sessions 4–5 use only development data: the stratified 20% final test from notebook 03 (`random_state=42`) remains closed. Development comparisons reuse five stratified, shuffled folds with seed 42. Notebook 07 runs nested CV within development; its outer results assess the restricted selection procedure, with the prior classroom search explicitly acknowledged.
 
 The economic calculation reproduces approximately +€127,796 per million customers on training predictions and +€234,292 on out-of-fold predictions, with an exploratory 95% interval from −€149,627 to +€575,080. Its central estimate is positive, but the interval includes losses. Predictions remain fixed during bootstrap; costs and retention effectiveness are assumptions, not measured causal effects.
 
-Sessions 4–5 require scikit-learn 1.9 or later for explicit cross-validation splitters in target encoding. SciPy is listed directly for Wilcoxon (it was already installed through scikit-learn). Notebooks 06–11 print the library versions used for their saved outputs.
+Sessions 4–5 require scikit-learn 1.9 or later for explicit cross-validation splitters in target encoding. SciPy is listed directly for Wilcoxon (it was already installed through scikit-learn). Notebooks 06–14 print the library versions used for their saved outputs.
 
-All eleven notebooks have been reviewed against notebook 01's teaching style: comments explain each executable step, intermediate values have readable names, and calculations are separated from their plots. Straightforward loops replace dense nested comprehensions. Row-wise feature formulas use ordinary functions; the frequency encoder keeps a small fitted class because it must remember training statistics. Repeated fold evaluation and accounting retain local helpers with their steps exposed. Each notebook remains self-contained, with no shared helper module required. The readability review preserves the experiments, splits, seeds, model settings and economic assumptions; all eleven notebooks were checked from clean kernels.
+The first eleven notebooks have been reviewed against notebook 01's teaching style: comments explain each executable step, intermediate values have readable names, and calculations are separated from their plots. Straightforward loops replace dense nested comprehensions. Row-wise feature formulas use ordinary functions; the frequency encoder keeps a small fitted class because it must remember training statistics. Repeated fold evaluation and accounting retain local helpers with their steps exposed. These modelling notebooks remain self-contained, with no shared helper module required. The readability review preserves the experiments, splits, seeds, model settings and economic assumptions; all eleven were checked from clean kernels. The new Session 7 notebooks follow the same conventions. Session 8 deliberately moves its transform into an importable module so the saved pipeline works in a separate process.
 
 ### Session 6 protocol and economic assumptions
 
@@ -39,6 +42,38 @@ Campaign counts, contributions, differences and interval bounds are reported per
 The v4 reference used scikit-learn 1.8.0; saved notebooks use the compatible repository environment (versions printed in each notebook), preserving the >=1.9 requirement. Notebook 11 calculates differences from the classroom figures instead of replacing computed values with reference constants.
 
 Executed with Python 3.12.9, scikit-learn 1.9.1, NumPy 2.5.3 and pandas 3.0.6, all three Session 6 notebooks pass from clean kernels. Raw finalist probabilities win validation Brier; both models select cutoff 0.2. Holdout expected contributions reproduce v4 at €10,127,750.18 and €10,205,819.73 per million, a paired difference of +€78,069.55 with conditional 95% interval [−€231,405.25, +€401,703.34]. Group detection checks also match. There is no material discrepancy in these campaign results despite the environment change; small continuous probability differences need not alter cutoff decisions. The interval includes losses, and offer-response assumptions still require experimental validation.
+
+### Session 7: explain the model and the decision
+
+Notebooks 12–13 follow the local Session 7 v3 HTML and its embedded experiment and evidence: global permutation, tree gain, correlated inputs, local SHAP, global SHAP and the audience question. The syllabus also mentions PDPs; notebook 13 includes an optional PDP/ICE exercise after the main SHAP sequence, exposing unsupported tenure/charge combinations. Instructor sources remain read-only and are not required at runtime.
+
+Both notebooks rebuild the Session 6 fitting/validation experiment independently, without using holdout. The selected raw Logistic Regression finalist retains original inputs plus two logs. Raw-column shuffles recompute derived features; 20 repeats use validation AP. Within-decile shuffles approximately condition on one related variable, while joint shuffling preserves the tenure/total-charge pairing. These diagnose model reliance, not causal effects. The comparison XGBoost uses the raw-input classroom recipe with 100 trees, learning rate 0.1, depth 2 and seed 42.
+
+Linear SHAP is computed directly as `coefficient × (transformed input − fitting mean)` in log odds, grouped back to raw fields. Base plus contributions reconstruct every validation score and probability. This uses an interventional background convention; XGBoost's built-in TreeSHAP comparison uses its tree-path-dependent default. Global mean absolute SHAP measures score attribution, while permutation measures AP loss. Neither establishes which retention action would work. No new interpretability package is needed.
+
+### Session 8 preview: serve a local model
+
+Read [notebook 14](notebooks/14_telco_local_fastapi.ipynb) and the [complete local walkthrough](serving/README.md). After activating `.venv`, run these commands **from the repository root**:
+
+```bash
+python -m pip install -r serving/requirements.txt
+python -m pip check
+python -m serving.train
+python -m uvicorn serving.app:app --host 127.0.0.1 --port 8000
+```
+
+Keep that server running. In a second terminal at the root, activate the same environment and run:
+
+```bash
+python -m serving.client
+python -m serving.check_api
+```
+
+The API loads the complete fitted Session 6 pipeline once per server process. The full input is in [`serving/customer.json`](serving/customer.json); the response is approximately `{"churn_probability": 0.3598182, "model_version": "telco-s6-v1"}`. This is a risk estimate. The caller separately applies its offer cutoff and economics. The HTTP check compares the response with direct saved-pipeline scoring, checks required-field/type/category errors and verifies fitted imputation for an explicit null total charge. Stop the server with `Ctrl+C` after the exercise.
+
+FastAPI, Pydantic and Uvicorn are optional serving dependencies; joblib is declared directly there. Generated model artifacts and environment metadata live in ignored `serving/artifacts/`. This first example ends at local HTTP scoring. The lesson briefly bridges to input/concept drift and delayed outcome checks; production infrastructure, automation and operational monitoring are reserved for next semester's dedicated course.
+
+Notebooks 12–14 were executed from clean kernels with Python 3.12.9, scikit-learn 1.9.1, pandas 3.0.6, NumPy 2.5.3 and XGBoost 3.4.1. The local serving walkthrough was checked with FastAPI 0.163.1, Pydantic 2.14.3, Uvicorn 0.54.0 and joblib 1.6.0 on Windows PowerShell. Dependency checks passed; the Python client and `curl.exe` returned HTTP 200 with risk 0.3598181970496265. Real HTTP checks also passed for missing `Contract` (422), invalid numeric type (422), unknown contract category (422) and null total-charge imputation (200). The macOS/Linux shell examples are provided but were not run on those operating systems.
 
 ## Set up your Python environment
 
